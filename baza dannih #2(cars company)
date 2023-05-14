@@ -1,0 +1,222 @@
+public class Worker
+{
+    public string name;
+    public string start;
+    public string start_here;
+
+    public Worker(string name, string start, string start_here)
+    {
+        this.name = name;
+        this.start = start;
+        this.start_here = start_here;
+    }
+}
+
+public class Driver: Worker
+{
+    public string car;
+    public Driver(string name, string start, string start_here, string car): base(name, start, start_here)
+    {
+        this.car = car;
+    }
+}
+
+public class Boss : Worker
+{
+    public List<string> decree;
+    public Boss(string name, string start, string start_here, List<string> decree) : base(name, start, start_here)
+    {
+        this.decree = decree;
+    }
+}
+
+public class Car
+{
+    public string auto_name;
+    public string number;
+    public List<string> book_fix;
+    public List<Worker> technic;
+    public List<string> technical_inspection;
+    public List<Driver> drivers;
+    public Car(string auto_name, string number, List<string> book_fix, List<Worker> technic, List<string> technical_inspection, List<Driver> drivers)
+    {
+        this.auto_name = auto_name;
+        this.number = number;
+        this.book_fix = book_fix;
+        this.technic = technic;
+        this.technical_inspection = technical_inspection;
+        this.drivers = drivers;
+    }
+}
+
+class Program
+{
+    static void Main()
+    {
+        Worker helper1 = new Worker("Алексей", "23.02.2021", "25.03.2021");
+        Worker helper2 = new Worker("Виктор", "13.04.2019", "13.04.2019");
+        Worker helper3 = new Worker("Никита", "30.11.2018", "25.03.2020");
+
+        List<Worker> helpers = new List<Worker>() { helper1, helper2, helper3 };
+
+        Driver man1 = new Driver("Григорий", "23.02.2021", "25.03.2021", "К282РС");
+        Driver man2 = new Driver("Рустам", "13.04.2019", "13.04.2019", "Н367ВП");
+        Driver man3 = new Driver("Азамат", "30.11.2018", "25.03.2020", "Г112КО");
+
+        List<Driver> drivers = new List<Driver>() { man1, man2, man3 };
+
+        Boss boss1 = new Boss("Максим", "23.02.2021", "25.03.2021", new List<string> { "Мыть руки, носить маски!", "17.04.2020", "С 3-го марта произойдёт повышение заработной платы!", "25.01.2023" });
+        Boss boss2 = new Boss("Дмитрий", "13.04.2019", "13.04.2019", new List<string> { "Я тут босс!", "03.03.2023" });
+        Boss boss3 = new Boss("Артём", "30.11.2018", "25.03.2020", new List<string> { "Не выражаться при пассажирах!", "19.01.2023" });
+
+        List<Boss> bosses = new List<Boss>() { boss1, boss2, boss3 };
+
+        List<dynamic> All = new List<dynamic> { helpers, drivers, bosses };
+
+        Car bus1 = new Car("Автобус 33", "К282РС", new List<string> { "Выравнивание правого крыла", "24.02.2021", "Покраска правого крыла", "26.02.2021" }, new List<Worker> { helper1, helper3 }, new List<string> { "10.03.2020", "10.03.2021", "10.03.2022" }, new List<Driver> { man1, man2 });
+        Car bus2 = new Car("KAMAZ 5490", "Н367ВП", new List<string> { "Покраска кузова", "12.03.2021" }, new List<Worker> { helper3 }, new List<string> { "15.03.2020", "15.03.2021", "15.03.2022" }, new List<Driver> { man3 });
+        Car bus3 = new Car("Автобус 73", "Г112КО", new List<string> { "Смена бампера", "03.05.2022" }, new List<Worker> { helper2 }, new List<string> { "23.03.2020", "23.03.2021", "23.03.2022" }, new List<Driver> { man2, man3 });
+
+        List<Car> cars = new List<Car>() { bus1, bus2, bus3 };
+
+        int not_first = 0; // <костыль> переменная, благодаря к-рой не происходит ReadLine на первой итерации
+
+        while (true)
+        {
+            if (not_first != 0)
+                Console.ReadLine();
+
+            not_first = 1;
+
+            Console.Clear();
+
+            menu();
+
+            int variation = int.Parse(Console.ReadLine());
+
+            Console.Clear();
+
+            switch (variation)
+            {
+                case 1: check_driver(cars); break;
+                case 2: check_stazh(All); break;
+                case 3: check_decree(bosses); break;
+                case 4: check_technical_inspection(cars); break;
+                case 5: check_book(cars);break;
+                case 0: Environment.Exit(0); break;
+            }
+
+            static void menu()
+            {
+                Console.WriteLine("1.Водители транспортного средства");
+                Console.WriteLine("2.Стаж работников");
+                Console.WriteLine("3.Перечень указов");
+                Console.WriteLine("4.Книга техосмотра");
+                Console.WriteLine("5.Ремонтные работы");
+                Console.WriteLine("0.Выход");
+            }
+
+            static void check_driver(List<Car> cars)
+            {
+                int exist = 0; // костыль, отвечает за то, чтобы выдать информ. о том, что номер неверный
+                Console.Write("Введите номер: ");
+                string number = Console.ReadLine();
+                foreach (Car car in cars)
+                {
+                    if (number == car.number)
+                    {
+                        if (car.drivers.Count == 1) Console.Write("\nВодитель " + car.auto_name + "[" + car.number + "]" + ": ");
+                        else Console.WriteLine("\nВодители " + car.auto_name + "[" + car.number + "]" + ": ");
+
+                        foreach (Driver driver in car.drivers)
+                            Console.WriteLine(driver.name);
+                        exist = 1;
+                    }
+                }
+                if (exist == 0)
+                    Console.WriteLine("Неверный номер!");
+            }
+
+            static void Stazh(string name, string start_job)
+            {
+                int day = int.Parse(start_job.Split('.', ' ')[0]);
+                int month = int.Parse(start_job.Split('.', ' ')[1]);
+                int year = int.Parse(start_job.Split('.', ' ')[2]);
+
+                int res = ((DateTime.Now.Year * 365 + DateTime.Now.Month * 30 + DateTime.Now.Day) - (year * 365 + month * 30 + day));
+                year = res / 365;
+                month = res % 365 / 30;
+                day = res % 30;
+
+                Console.WriteLine("стаж <" + name + "> : " + year + " г. " + month + " мес. " + day + " д.");
+            }
+
+            static void check_stazh(List<dynamic> All)
+            {
+                for (int i = 0; i < All.Count; i++) // dynamic type
+                {
+                    switch (i)
+                    {
+                        case 0:
+                            Console.WriteLine("Обслуживающий персонал: ");
+                            break;
+                        case 1:
+                            Console.WriteLine("Водители: ");
+                            break;
+                        case 2:
+                            Console.WriteLine("Начальники: ");
+                            break;
+                    }
+
+                    foreach (dynamic man in All[i])
+                    {
+                        Console.Write("Общий ");
+                        Stazh(man.name, man.start);
+                        Console.Write("Здешний ");
+                        Stazh(man.name, man.start_here);
+                        Console.WriteLine();
+                    }
+                }
+            }
+
+            static void check_decree(List<Boss> bosses)
+            {
+                int k = 0; // переменная, отвечающая за отображения "боссов" (шагание по списку)
+                foreach (Boss boss in bosses)
+                {
+                    for (int i = 0; i < boss.decree.Count; i += 2)
+                    {
+                        Console.WriteLine(boss.decree[i] + " (от " + boss.decree[i + 1] + ", " +  boss.name + ")");
+                        k++;
+                    }
+                }
+            }
+
+            static void check_technical_inspection(List<Car> cars)
+            {
+                foreach (Car car in cars)
+                {
+                    Console.WriteLine("Транспортное средство " + car.auto_name + "(" + car.number + ")" + " проходило техосмотр:");
+                    foreach (string i in car.technical_inspection)
+                        Console.WriteLine(i);
+                    Console.WriteLine();
+                }
+            }
+
+            static void check_book(List<Car> cars)
+            {
+                foreach (Car car in cars)
+                {
+                    int k = 0; // переменная, отвечающая за отображения "ремонтников" (шагание по списку)
+                    Console.WriteLine("Для транспортного средства " + car.auto_name + "[" + car.number + "]:");
+                    for (int i = 0; i < car.book_fix.Count; i+=2)
+                    {
+                        Console.WriteLine(car.book_fix[i] + " была проведена " + car.book_fix[i + 1] + " (" + car.technic[k].name + ")");
+                        k++;
+                    }
+                    Console.WriteLine();
+                }
+            }
+        }
+    }
+}
